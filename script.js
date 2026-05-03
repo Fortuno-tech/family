@@ -179,3 +179,51 @@ function toggleTheme() {
     }
     lucide.createIcons(); // Pour rafraîchir l'icône soleil/lune
 }
+function checkAdminAccess() {
+    Swal.fire({
+        title: 'Accès Administration',
+        text: 'Veuillez entrer le mot de passe',
+        input: 'password',
+        inputAttributes: {
+            autocapitalize: 'off',
+            autocorrect: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Connexion',
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: '#4338ca', // Couleur de ton nav (Indigo 700)
+        background: document.body.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#ffffff',
+        color: document.body.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#0f172a',
+        inputPlaceholder: 'Mot de passe...',
+        
+        // Personnalisation du style
+        customClass: {
+            popup: 'rounded-2xl border border-slate-200 shadow-xl',
+            title: 'font-black text-xl',
+            confirmButton: 'rounded-xl px-6 py-2 font-bold',
+            cancelButton: 'rounded-xl px-6 py-2'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Remplace '1234' par ton vrai mot de passe
+            if (result.value === 'TON_MOT_DE_PASSE') { 
+                switchTab('admin');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Bienvenue Admin',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Accès refusé',
+                    text: 'Mot de passe incorrect',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+    });
+}
