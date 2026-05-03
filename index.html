@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitantanam-bola ny Fianakaviana - 2026</title> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+
+<style>
+    /* Définition des variables de couleurs */
+    :root {
+        --bg-body: #f1f5f9;
+        --bg-card: #ffffff;
+        --bg-alt: #f8fafc; /* Ho an'ny loha-tabilao sy hover */
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --nav-bg: #4338ca;
+    }
+
+    [data-theme="dark"] {
+        --bg-body: #0f172a;
+        --bg-card: #1e293b;
+        --bg-alt: #0f172a; /* Maizina kokoa */
+        --text-main: #f8fafc; /* Namboariko ho fotsy fa tsy manga antitra intsony */
+        --text-muted: #94a3b8;
+        --border-color: #334155;
+        --nav-bg: #1e1b4b;
+    }
+
+    body { background-color: var(--bg-body); color: var(--text-main); transition: all 0.3s ease; }
+    
+    /* Ireo class Tailwind fotsy rehetra hery no ovaina ho variable */
+    .bg-white { background-color: var(--bg-card) !important; }
+    .bg-slate-50, .bg-slate-50\/50 { background-color: var(--bg-alt) !important; }
+    
+    .text-slate-900, .text-slate-800, .text-slate-700 { color: var(--text-main) !important; }
+    .text-slate-500, .text-slate-600 { color: var(--text-muted) !important; }
+    
+    .border-slate-200, .border-slate-100, .divide-slate-100, .divide-y > * { border-color: var(--border-color) !important; }
+    
+    nav { background-color: var(--nav-bg) !important; }
+
+    /* Fanafoanana ny tabilao fotsy any aoriana */
+    table thead tr { background-color: var(--bg-alt) !important; }
+    tr.hover\:bg-slate-50:hover { background-color: var(--bg-alt) !important; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen font-sans">
+
+    <!-- NAVIGATION -->
+    <nav class="bg-indigo-700 text-white p-4 shadow-xl">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="flex items-center gap-2 font-bold text-xl">
+                <i data-lucide="wallet"></i> Rindrandamina hoany la Famille <span class="text-indigo-300 font-normal">2026</span>
+            </h1>
+            <div class="flex gap-4 font-medium">
+                <button onclick="switchTab('public')" class="hover:text-indigo-200 transition">Dashboard</button>
+                <button onclick="checkAdminAccess()" class="bg-indigo-800 px-4 py-1.5 rounded-lg hover:bg-indigo-900 transition flex items-center gap-2 border border-indigo-500 text-sm">
+                    <i data-lucide="lock" class="w-4"></i> Admin
+                </button>
+                <button onclick="toggleTheme()" class="p-2 hover:bg-indigo-600 rounded-full transition">
+                    <i data-lucide="sun" id="themeIcon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto p-4 md:p-6">
+        
+        <!-- SECTION 1 : DASHBOARD PUBLIC -->
+        <div id="public" class="tab-content active space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="stat-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-slate-500 text-xs uppercase tracking-widest font-bold">Vola Voangona</p>
+                    <h2 id="totalCollected" class="text-3xl font-black text-indigo-600">0 Ar</h2>
+                </div>
+                <div class="stat-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-slate-500 text-xs uppercase tracking-widest font-bold">Fandrosoana (Taona)</p>
+                    <h2 id="participationRate" class="text-3xl font-black text-emerald-500">0%</h2>
+                </div>
+                <div class="stat-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-slate-500 text-xs uppercase tracking-widest font-bold">Mbola andrasana</p>
+                    <h2 id="remainingAmount" class="text-3xl font-black text-rose-500">0 Ar</h2>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="font-bold text-slate-700">Tabilao fanaraha-maso (2 000 Ar/volana)</h3>
+                    <div class="flex gap-2 items-center text-xs">
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-500 rounded-full"></span> Vita</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-slate-200 rounded-full"></span> Miandry</span>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-[10px] uppercase text-slate-400 bg-slate-50">
+                                <th class="p-4 border-b">Mpikambana</th>
+                                <th class="p-2 border-b text-center">Jan</th>
+                                <th class="p-2 border-b text-center">Feb</th>
+                                <th class="p-2 border-b text-center">Mar</th>
+                                <th class="p-2 border-b text-center">Apr</th>
+                                <th class="p-2 border-b text-center">May</th>
+                                <th class="p-2 border-b text-center">Jun</th>
+                                <th class="p-2 border-b text-center">Jul</th>
+                                <th class="p-2 border-b text-center">Aug</th>
+                                <th class="p-2 border-b text-center">Sep</th>
+                                <th class="p-2 border-b text-center">Oct</th>
+                                <th class="p-2 border-b text-center">Nov</th>
+                                <th class="p-2 border-b text-center">Dec</th>
+                                <th class="p-4 border-b text-right font-bold text-indigo-700">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="publicTableBody" class="divide-y divide-slate-100">
+                            <!-- JS no mameno azy eto -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- STATS & GRAPHE -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="w-5 text-indigo-600"></i> Fivoaran'ny fidiram-bola
+                    </h3>
+                    <canvas id="paymentChart" height="200"></canvas>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-5 text-indigo-600"></i> Bilan 2026
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                            <span class="text-sm text-slate-600">Salan'isa naloa (Moyenne)</span>
+                            <span id="avgPayment" class="font-bold text-indigo-600">0 Ar</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                            <span class="text-sm text-slate-600">Efa nandoa feno (12 volana)</span>
+                            <span id="fullPaidCount" class="font-bold text-emerald-600">0</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl gap-4">
+                            <span class="text-sm text-slate-600">Taham-pahavitrihana</span>
+                            <div class="flex-1 bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div id="progressBar" class="bg-indigo-600 h-full transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2 : ADMIN PANEL -->
+        <div id="admin" class="tab-content space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold flex items-center gap-2">
+                    <i data-lucide="settings" class="text-indigo-600"></i> Fitantanana
+                </h2>
+                <button onclick="switchTab('public')" class="text-slate-500 hover:text-indigo-600 transition underline text-sm">Hiverina amin'ny Dashboard</button>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-indigo-600">
+                <h3 class="font-bold text-lg mb-4 text-indigo-900">Hampiditra mpikambana vaovao</h3>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="text" id="adminName" placeholder="Anarana feno" class="flex-1 border p-2 rounded-lg outline-indigo-500">
+                    <button onclick="saveMember()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 transition">
+                        Hampiditra
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="p-4 font-bold text-sm">Mpikambana</th>
+                            <th class="p-4 font-bold text-sm">Vola efa naloa</th>
+                            <th class="p-4 font-bold text-sm text-right">Hetsika</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody" class="divide-y divide-slate-100">
+                        <!-- JS no mameno azy eto -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE INITIALIZATION -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCX7dnoKRyOpvjOKValtQsITLOpJTTo-Y",
+            authDomain: "family-bee53.firebaseapp.com",
+            projectId: "family-bee53",
+            storageBucket: "family-bee53.firebasestorage.app",
+            messagingSenderId: "268306992258",
+            appId: "1:268306992258:web:dfdf5ba71d5dd73306b89b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Expose Firebase to script.js
+        window.db = db;
+        window.fs = { collection, onSnapshot, doc, updateDoc, deleteDoc, addDoc, query, orderBy };
+    </script>
+
+    <!-- MAIN SCRIPT -->
+    <script src="script.js"></script>
+</body>
+</html>
