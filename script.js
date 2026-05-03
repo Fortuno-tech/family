@@ -164,24 +164,36 @@ window.switchTab = (id) => {
 };
 
 function checkAdminAccess() {
+    // Récupération dynamique des couleurs de ton thème actuel
+    const bodyStyles = window.getComputedStyle(document.body);
+    const bgColor = bodyStyles.getPropertyValue('--bg-card').trim() || '#ffffff';
+    const textColor = bodyStyles.getPropertyValue('--text-main').trim() || '#0f172a';
+    const altBg = bodyStyles.getPropertyValue('--bg-alt').trim() || '#f8fafc';
+    const borderColor = bodyStyles.getPropertyValue('--border-color').trim() || '#e2e8f0';
+
     Swal.fire({
         title: 'Fidirana Admin',
         html: `
-            <p class="text-slate-500 text-sm mb-4">Ampidiro ny teny miafina raha te hanohy ianao</p>
-            <div class="relative">
-                <input type="password" id="adminPassword" class="swal2-input w-full m-0 rounded-xl border-slate-200" placeholder="Teny miafina...">
+            <p class="text-sm mb-4" style="color: var(--text-muted)">Ampidiro ny teny miafina raha te hanohy ianao</p>
+            <div class="relative text-left">
+                <input type="password" id="adminPassword" 
+                    class="swal2-input w-full m-0 rounded-xl outline-none" 
+                    style="background-color: ${altBg}; color: ${textColor}; border: 1px solid ${borderColor};"
+                    placeholder="Teny miafina...">
                 <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600">
                     <i id="eyeIcon" data-lucide="eye" class="w-5 h-5"></i>
                 </button>
             </div>
         `,
+        background: bgColor,
+        color: textColor,
         showCancelButton: true,
         confirmButtonText: 'Hampiditra',
         cancelButtonText: 'Hanafoana',
         confirmButtonColor: '#4338ca',
-        background: document.body.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#ffffff',
-        color: document.body.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#0f172a',
+        cancelButtonColor: '#64748b',
         didRender: () => {
+            // Initialisation de l'icône Lucide à l'ouverture
             if (window.lucide) {
                 lucide.createIcons();
             }
@@ -200,8 +212,8 @@ function checkAdminAccess() {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            // Hamarino tsara ny mot de passe-nao eto (trim() mba hanesorana ny espace)
-            if (result.value.password.trim() === '123456') { 
+            // Remplace '1234' par ton vrai mot de passe
+            if (result.value.password.trim() === '1234') { 
                 switchTab('admin');
                 Swal.fire({
                     icon: 'success',
@@ -209,7 +221,9 @@ function checkAdminAccess() {
                     timer: 1500,
                     showConfirmButton: false,
                     toast: true,
-                    position: 'top-end'
+                    position: 'top-end',
+                    background: bgColor,
+                    color: textColor
                 });
             } else {
                 Swal.fire({
@@ -217,7 +231,9 @@ function checkAdminAccess() {
                     title: 'Diso ny teny miafina',
                     text: 'Mbola tsy afaka miditra ianao',
                     confirmButtonColor: '#ef4444',
-                    confirmButtonText: 'Averina'
+                    confirmButtonText: 'Averina',
+                    background: bgColor,
+                    color: textColor
                 });
             }
         }
@@ -248,6 +264,8 @@ function togglePasswordVisibility() {
         eyeIcon.setAttribute('data-lucide', 'eye');
     }
     
-    // Rafraîchit l'icône Lucide pour afficher le changement
-    lucide.createIcons();
+    // Mise à jour de l'icône
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 }
