@@ -1,5 +1,5 @@
 // --- CONFIGURATION ---
-const PIN_SECRET = "123456";
+const PIN_SECRET = "1712";
 const SARANY_ISAM_BOLANA = 2000;
 let myChart = null; // Hitahirizana ny graphe
 let members = [];   // Hozakain'ny Firebase ny fenoina eto
@@ -213,7 +213,7 @@ function checkAdminAccess() {
     }).then((result) => {
         if (result.isConfirmed) {
             // Remplace '1234' par ton vrai mot de passe
-            if (result.value.password.trim() === '1234') { 
+            if (result.value.password.trim() === '1712') { 
                 switchTab('admin');
                 Swal.fire({
                     icon: 'success',
