@@ -18,8 +18,11 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --nav-bg: #4338ca;
+            /* Ajout des marges de sécurité pour Android */
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
-
+    
         [data-theme="dark"] {
             --bg-body: #0f172a;
             --bg-card: #1e293b;
@@ -29,12 +32,16 @@
             --border-color: #334155;
             --nav-bg: #1e1b4b;
         }
-
+    
         body { 
             background-color: var(--bg-body); 
             color: var(--text-main); 
             transition: all 0.3s ease;
             -webkit-tap-highlight-color: transparent;
+            /* Empêche le contenu de glisser sous la barre de navigation Android */
+            padding-bottom: calc(1.5rem + var(--safe-bottom));
+            min-height: 100vh;
+            overflow-x: hidden;
         }
         
         .bg-white { background-color: var(--bg-card) !important; }
@@ -42,16 +49,29 @@
         .text-slate-900, .text-slate-800, .text-slate-700 { color: var(--text-main) !important; }
         .text-slate-500, .text-slate-600 { color: var(--text-muted) !important; }
         .border-slate-200, .border-slate-100, .divide-slate-100, .divide-y > * { border-color: var(--border-color) !important; }
-        nav { background-color: var(--nav-bg) !important; }
-
+        
+        nav { 
+            background-color: var(--nav-bg) !important; 
+            /* Ajuste la barre de titre pour qu'elle commence sous l'heure/batterie */
+            padding-top: calc(0.75rem + var(--safe-top)) !important;
+        }
+    
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
-        /* Mobile specific fixes */
+    
+        /* Mobile specific fixes pour APK */
         @media (max-width: 640px) {
-            .stat-card h2 { font-size: 1.5rem; }
-            th, td { padding: 0.75rem 0.5rem !important; font-size: 0.8rem; }
-            .btn-action { padding: 0.75rem !important; } /* Bokotra lehibe kokoa amin'ny finday */
+            .stat-card h2 { font-size: 1.25rem; }
+            th, td { padding: 0.6rem 0.4rem !important; font-size: 0.75rem; }
+            .btn-action { padding: 0.8rem !important; }
+            
+            /* On réduit un peu les marges pour gagner de la place sur petit écran */
+            .max-w-6xl { padding-left: 1rem; padding-right: 1rem; }
+        }
+    
+        /* Fix pour le défilement fluide sur Android */
+        * {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
