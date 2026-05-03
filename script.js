@@ -163,9 +163,66 @@ window.switchTab = (id) => {
     document.getElementById(id).classList.add('active');
 };
 
-window.checkAdminAccess = () => {
-    if (prompt("Admin PIN:") === PIN_SECRET) window.switchTab('admin');
-};
+function checkAdminAccess() {
+    Swal.fire({
+        title: 'Fidirana Admin',
+        html: `
+            <p class="text-slate-500 text-sm mb-4">Ampidiro ny teny miafina raha te hanohy ianao</p>
+            <div class="relative">
+                <input type="password" id="adminPassword" class="swal2-input w-full m-0 rounded-xl border-slate-200" placeholder="Teny miafina...">
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600">
+                    <i id="eyeIcon" data-lucide="eye" class="w-5 h-5"></i>
+                </button>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Hampiditra',
+        cancelButtonText: 'Hanafoana',
+        confirmButtonColor: '#4338ca',
+        background: document.body.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#ffffff',
+        color: document.body.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#0f172a',
+        didRender: () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        },
+        preConfirm: () => {
+            const password = Swal.getPopup().querySelector('#adminPassword').value;
+            if (!password) {
+                Swal.showValidationMessage(`Mba ampidiro ny teny miafina azafady`);
+            }
+            return { password: password };
+        },
+        customClass: {
+            popup: 'rounded-2xl border border-slate-200 shadow-xl',
+            confirmButton: 'rounded-xl px-6 py-2 font-bold',
+            cancelButton: 'rounded-xl px-6 py-2'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Hamarino tsara ny mot de passe-nao eto (trim() mba hanesorana ny espace)
+            if (result.value.password.trim() === '123456') { 
+                switchTab('admin');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Tafiditra ianao!',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Diso ny teny miafina',
+                    text: 'Mbola tsy afaka miditra ianao',
+                    confirmButtonColor: '#ef4444',
+                    confirmButtonText: 'Averina'
+                });
+            }
+        }
+    });
+}
 function toggleTheme() {
     const body = document.documentElement;
     const icon = document.getElementById('themeIcon');
@@ -179,51 +236,18 @@ function toggleTheme() {
     }
     lucide.createIcons(); // Pour rafraîchir l'icône soleil/lune
 }
-function checkAdminAccess() {
-    Swal.fire({
-        title: 'Accès Administration',
-        text: 'Veuillez entrer le mot de passe',
-        input: 'password',
-        inputAttributes: {
-            autocapitalize: 'off',
-            autocorrect: 'off'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Connexion',
-        cancelButtonText: 'Annuler',
-        confirmButtonColor: '#4338ca', // Couleur de ton nav (Indigo 700)
-        background: document.body.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#ffffff',
-        color: document.body.getAttribute('data-theme') === 'dark' ? '#f8fafc' : '#0f172a',
-        inputPlaceholder: 'Mot de passe...',
-        
-        // Personnalisation du style
-        customClass: {
-            popup: 'rounded-2xl border border-slate-200 shadow-xl',
-            title: 'font-black text-xl',
-            confirmButton: 'rounded-xl px-6 py-2 font-bold',
-            cancelButton: 'rounded-xl px-6 py-2'
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Remplace '1234' par ton vrai mot de passe
-            if (result.value === 'TON_MOT_DE_PASSE') { 
-                switchTab('admin');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Bienvenue Admin',
-                    timer: 1500,
-                    showConfirmButton: false,
-                    toast: true,
-                    position: 'top-end'
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Accès refusé',
-                    text: 'Mot de passe incorrect',
-                    confirmButtonColor: '#ef4444'
-                });
-            }
-        }
-    });
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('adminPassword');
+    const eyeIcon = document.getElementById('eyeIcon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.setAttribute('data-lucide', 'eye-off');
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.setAttribute('data-lucide', 'eye');
+    }
+    
+    // Rafraîchit l'icône Lucide pour afficher le changement
+    lucide.createIcons();
 }
