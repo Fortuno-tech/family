@@ -1,24 +1,36 @@
-/* Fandrindrana ankapobeny */
+/* 1. Fandrindrana ankapobeny (Configuration Générale) */
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Ajout de polices de secours pour les vieux Android */
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Karatra fampisehoana tarehimarika */
+/* 2. Karatra fampisehoana tarehimarika (Stat Cards) */
 .stat-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    background: white;
+    /* On utilise 'opacity' et 'transform' uniquement pour la performance */
+    transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* GPU acceleration pour éviter les saccades sur mobile */
+    will-change: transform;
 }
 
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+/* On active l'effet de survol (hover) UNIQUEMENT sur ordinateur */
+@media (hover: hover) {
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
 }
 
-/* Stil'ny tabilao */
+/* 3. Stil'ny tabilao (Tabs) */
 .tab-content {
     display: none;
+    /* Animation plus simple pour les téléphones bas de gamme */
+    -webkit-animation: fadeIn 0.3s ease-out;
     animation: fadeIn 0.3s ease-out;
 }
 
@@ -26,33 +38,43 @@ body {
     display: block;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Animation optimisée : on évite le translateY trop lourd sur mobile */
+@-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* Stil'ny input */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 4. Stil'ny input (Champs de saisie) */
 .input-field {
-    transition: all 0.2s;
     border: 1.5px solid #e2e8f0;
+    outline: none;
+    /* On ne transitionne que la bordure (plus léger que 'all') */
+    transition: border-color 0.2s ease-in-out;
 }
 
 .input-field:focus {
     border-color: #4f46e5;
-    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
     background: white;
+    /* Ombre plus discrète pour économiser de la batterie/processeur */
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
-/* Boribory kely amin'ny volana */
+/* 5. Boribory kely (Dots) */
 .month-dot {
     width: 12px;
     height: 12px;
     border-radius: 9999px;
     display: inline-block;
-    transition: all 0.4s;
+    transition: background-color 0.4s;
 }
 
-/* Scrollbar ho an'ny tabilao */
+/* 6. Scrollbar (Barre de défilement) */
+/* Masqué ou simplifié sur certains navigateurs mobiles pour fluidité */
 .overflow-x-auto::-webkit-scrollbar {
     height: 6px;
 }
@@ -62,4 +84,16 @@ body {
 .overflow-x-auto::-webkit-scrollbar-thumb {
     background: #cbd5e1;
     border-radius: 10px;
+}
+
+/* 7. Bonus : Optimisation spécifique pour les très petits écrans / bas de gamme */
+@media (max-width: 480px) {
+    .stat-card:active {
+        background-color: #f8fafc; /* Feedback tactile simple sans ombre mavesatra */
+    }
+    
+    * {
+        /* Empêche le flash bleu au clic sur Android */
+        -webkit-tap-highlight-color: transparent;
+    }
 }
