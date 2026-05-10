@@ -4,28 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fianakaviana - 2026</title> 
-    
-    <!-- Bibliothèques externes -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <!-- Lien vers ton fichier CSS -->
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-alt: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --nav-bg: #4338ca;
+            /* Ajout des marges de sécurité pour Android */
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+    
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-alt: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --nav-bg: #1e1b4b;
+        }
+    
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            /* Empêche le contenu de glisser sous la barre de navigation Android */
+            padding-bottom: calc(1.5rem + var(--safe-bottom));
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .bg-white { background-color: var(--bg-card) !important; }
+        .bg-slate-50, .bg-slate-50\/50 { background-color: var(--bg-alt) !important; }
+        .text-slate-900, .text-slate-800, .text-slate-700 { color: var(--text-main) !important; }
+        .text-slate-500, .text-slate-600 { color: var(--text-muted) !important; }
+        .border-slate-200, .border-slate-100, .divide-slate-100, .divide-y > * { border-color: var(--border-color) !important; }
+        
+        nav { 
+            background-color: var(--nav-bg) !important; 
+            /* Ajuste la barre de titre pour qu'elle commence sous l'heure/batterie */
+            padding-top: calc(0.75rem + var(--safe-top)) !important;
+        }
+    
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    
+        /* Mobile specific fixes pour APK */
+        @media (max-width: 640px) {
+            .stat-card h2 { font-size: 1.25rem; }
+            th, td { padding: 0.6rem 0.4rem !important; font-size: 0.75rem; }
+            .btn-action { padding: 0.8rem !important; }
+            
+            /* On réduit un peu les marges pour gagner de la place sur petit écran */
+            .max-w-6xl { padding-left: 1rem; padding-right: 1rem; }
+        }
+    
+        /* Fix pour le défilement fluide sur Android */
+        * {
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen font-sans">
 
     <!-- NAVIGATION -->
-    <nav class="sticky top-0 z-50 text-white p-3 shadow-md">
+    <nav class="sticky top-0 z-50 text-white p-3 shadow-lg">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="flex items-center gap-2 font-bold text-lg">
+            <h1 class="flex items-center gap-2 font-bold text-lg md:text-xl">
                 <i data-lucide="wallet" class="w-5 h-5"></i> 
-                <span>Fikambanana 2026</span>
+                <span class="hidden xs:inline">La Famille</span> <span class="text-indigo-300 font-normal">Fikambanana 2026</span>
             </h1>
-            <div class="flex gap-2 items-center">
-                <button onclick="switchTab('public')" class="text-xs px-2 py-1 bg-white/10 rounded">Dash</button>
-                <button onclick="checkAdminAccess()" class="bg-indigo-800 px-3 py-1.5 rounded-lg flex items-center gap-1 border border-indigo-400 text-[10px]">
+            <div class="flex gap-2 md:gap-4 items-center">
+                <button onclick="switchTab('public')" class="text-sm px-2 py-1 hover:text-indigo-200 transition">Dash</button>
+                <button onclick="checkAdminAccess()" class="bg-indigo-800 px-3 py-1.5 rounded-lg hover:bg-indigo-900 transition flex items-center gap-1 border border-indigo-500 text-xs">
                     <i data-lucide="lock" class="w-3"></i> Admin
                 </button>
                 <button onclick="toggleTheme()" class="p-2 bg-white/10 rounded-full">
@@ -35,78 +96,130 @@
         </div>
     </nav>
 
-    <div class="max-w-6xl mx-auto p-3 space-y-6">
+    <div class="max-w-6xl mx-auto p-3 md:p-6 space-y-6">
+        
         <!-- SECTION 1 : DASHBOARD PUBLIC -->
-        <div id="public" class="tab-content active space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="stat-card bg-white p-4 rounded-xl shadow-sm">
-                    <p class="text-slate-500 text-[9px] uppercase font-bold">Voangona</p>
-                    <h2 id="totalCollected" class="text-xl font-black text-indigo-600">0 Ar</h2>
+        <div id="public" class="tab-content active space-y-4 md:space-y-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="stat-card bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Voangona</p>
+                    <h2 id="totalCollected" class="text-2xl font-black text-indigo-600">0 Ar</h2>
                 </div>
-                <div class="stat-card bg-white p-4 rounded-xl shadow-sm">
-                    <p class="text-slate-500 text-[9px] uppercase font-bold">Fandrosoana</p>
-                    <h2 id="participationRate" class="text-xl font-black text-emerald-500">0%</h2>
+                <div class="stat-card bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Fandrosoana</p>
+                    <h2 id="participationRate" class="text-2xl font-black text-emerald-500">0%</h2>
                 </div>
-                <div class="stat-card bg-white p-4 rounded-xl shadow-sm">
-                    <p class="text-slate-500 text-[9px] uppercase font-bold">Andrasana</p>
-                    <h2 id="remainingAmount" class="text-xl font-black text-rose-500">0 Ar</h2>
+                <div class="stat-card bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-slate-500 text-[10px] uppercase font-bold mb-1">Andrasana</p>
+                    <h2 id="remainingAmount" class="text-2xl font-black text-rose-500">0 Ar</h2>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-3 border-b bg-slate-50 flex justify-between items-center">
-                    <h3 class="font-bold text-slate-700 text-xs">Fanaraha-maso</h3>
-                    <div class="flex gap-2 text-[9px]">
+            <!-- Tabilao Table -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-slate-50/50">
+                    <h3 class="font-bold text-slate-700 text-sm">Fanaraha-maso (2000/volana)</h3>
+                    <div class="flex gap-3 items-center text-[10px]">
                         <span class="flex items-center gap-1"><span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Vita</span>
                         <span class="flex items-center gap-1"><span class="w-2 h-2 bg-slate-200 rounded-full"></span> Miandry</span>
                     </div>
                 </div>
+                
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
                         <thead>
-                            <tr class="text-[9px] uppercase text-slate-400 bg-slate-50">
-                                <th class="p-3 border-b">Mpikambana</th>
-                                <th class="p-1 border-b text-center">J</th><th class="p-1 border-b text-center">F</th>
-                                <th class="p-1 border-b text-center">M</th><th class="p-1 border-b text-center">A</th>
-                                <th class="p-1 border-b text-center">M</th><th class="p-1 border-b text-center">J</th>
-                                <th class="p-1 border-b text-center">J</th><th class="p-1 border-b text-center">A</th>
-                                <th class="p-1 border-b text-center">S</th><th class="p-1 border-b text-center">O</th>
-                                <th class="p-1 border-b text-center">N</th><th class="p-1 border-b text-center">D</th>
-                                <th class="p-3 border-b text-right">Total</th>
+                            <tr class="text-[10px] uppercase text-slate-400 bg-slate-50">
+                                <th class="p-3 border-b sticky left-0 bg-white z-10">Mpikambana</th>
+                                <th class="p-2 border-b text-center text-[9px]">J</th>
+                                <th class="p-2 border-b text-center text-[9px]">F</th>
+                                <th class="p-2 border-b text-center text-[9px]">M</th>
+                                <th class="p-2 border-b text-center text-[9px]">A</th>
+                                <th class="p-2 border-b text-center text-[9px]">M</th>
+                                <th class="p-2 border-b text-center text-[9px]">J</th>
+                                <th class="p-2 border-b text-center text-[9px]">J</th>
+                                <th class="p-2 border-b text-center text-[9px]">A</th>
+                                <th class="p-2 border-b text-center text-[9px]">S</th>
+                                <th class="p-2 border-b text-center text-[9px]">O</th>
+                                <th class="p-2 border-b text-center text-[9px]">N</th>
+                                <th class="p-2 border-b text-center text-[9px]">D</th>
+                                <th class="p-3 border-b text-right font-bold text-indigo-700">Total</th>
                             </tr>
                         </thead>
-                        <tbody id="publicTableBody" class="divide-y divide-slate-100 text-xs"></tbody>
+                        <tbody id="publicTableBody" class="divide-y divide-slate-100 italic md:not-italic">
+                            <!-- JS no mameno azy eto -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="font-bold text-xs text-slate-700 mb-4">Fivoarana</h3>
-                <canvas id="paymentChart" style="max-height: 180px;"></canvas>
+            <!-- Chart Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-sm text-slate-700 mb-4">Fivoarana</h3>
+                    <canvas id="paymentChart" style="max-height: 250px;"></canvas>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-sm text-slate-700 mb-4">Bilan 2026</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                            <span class="text-xs text-slate-600">Salan'isa naloa</span>
+                            <span id="avgPayment" class="font-bold text-indigo-600 text-sm">0 Ar</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                            <span class="text-xs text-slate-600">Efa nandoa feno</span>
+                            <span id="fullPaidCount" class="font-bold text-emerald-600 text-sm">0</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl space-y-2">
+                            <span class="text-xs text-slate-600 block text-center">Taham-pahavitrihana</span>
+                            <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                                <div id="progressBar" class="bg-indigo-600 h-full transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- SECTION 2 : ADMIN PANEL -->
         <div id="admin" class="tab-content space-y-4">
-            <div class="flex justify-between items-center">
-                <h2 class="text-lg font-bold">Admin Panel</h2>
-                <button onclick="switchTab('public')" class="text-[10px] bg-slate-100 px-3 py-1 rounded-full">Hiverina</button>
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="settings" class="text-indigo-600 w-5 h-5"></i> Admin
+                </h2>
+                <button onclick="switchTab('public')" class="text-indigo-600 font-bold text-xs bg-indigo-50 px-3 py-1 rounded-full">Hiverina</button>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow-md border-t-4 border-indigo-600">
+
+            <div class="bg-white p-4 rounded-2xl shadow-lg border-l-4 border-indigo-600">
+                <p class="text-xs font-bold text-slate-500 mb-3 uppercase">Mpikambana Vaovao</p>
                 <div class="flex gap-2">
-                    <input type="text" id="adminName" placeholder="Anarana..." class="flex-1 border p-2 rounded-lg text-sm outline-none">
-                    <button onclick="saveMember()" class="bg-indigo-600 text-white px-4 rounded-lg"><i data-lucide="plus"></i></button>
+                    <input type="text" id="adminName" placeholder="Anarana..." class="flex-1 border border-slate-200 p-3 rounded-xl outline-indigo-500 text-sm bg-slate-50">
+                    <button onclick="saveMember()" class="bg-indigo-600 text-white px-5 rounded-xl font-bold hover:bg-indigo-700 transition">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                    </button>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-                <table class="w-full text-left">
-                    <tbody id="adminTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
-                </table>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="p-4 font-bold text-xs uppercase text-slate-400">Anarana</th>
+                                <th class="p-4 font-bold text-xs uppercase text-slate-400 text-right">Hetsika</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody" class="divide-y divide-slate-100">
+                            <!-- JS no mameno azy eto -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- FIREBASE INIT -->
+    <!-- FIREBASE & SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -122,11 +235,11 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
         window.db = db;
         window.fs = { collection, onSnapshot, doc, updateDoc, deleteDoc, addDoc, query, orderBy };
     </script>
 
-    <!-- Lien vers ton fichier JS principal -->
     <script src="script.js"></script>
 </body>
 </html>

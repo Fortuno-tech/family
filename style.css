@@ -1,58 +1,65 @@
-:root {
-    --bg-body: #f1f5f9;
-    --bg-card: #ffffff;
-    --bg-alt: #f8fafc;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
-    --nav-bg: #4338ca;
+/* Fandrindrana ankapobeny */
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.01em;
 }
 
-[data-theme="dark"] {
-    --bg-body: #0f172a;
-    --bg-card: #1e293b;
-    --bg-alt: #0f172a;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --border-color: #334155;
-    --nav-bg: #1e1b4b;
-}
-
-body { 
-    background-color: #f1f5f9; /* Fallback */
-    background-color: var(--bg-body); 
-    color: #0f172a; /* Fallback */
-    color: var(--text-main); 
-    transition: background 0.3s ease;
-    -webkit-tap-highlight-color: transparent;
-    padding-bottom: 80px; 
-    min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.bg-white { 
-    background-color: #ffffff !important; 
-    background-color: var(--bg-card) !important; 
-}
-
+/* Karatra fampisehoana tarehimarika */
 .stat-card {
-    border: 1px solid var(--border-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-nav { 
-    background-color: #4338ca !important; 
-    background-color: var(--nav-bg) !important; 
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-.tab-content { display: none; }
-.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+/* Stil'ny tabilao */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.tab-content.active {
+    display: block;
+}
 
 @keyframes fadeIn {
-    from { opacity: 0; } to { opacity: 1; }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 640px) {
-    th, td { padding: 8px 4px !important; font-size: 0.7rem; }
-    .overflow-x-auto { -webkit-overflow-scrolling: touch; }
-    .sticky { position: static !important; }
+/* Stil'ny input */
+.input-field {
+    transition: all 0.2s;
+    border: 1.5px solid #e2e8f0;
+}
+
+.input-field:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+    background: white;
+}
+
+/* Boribory kely amin'ny volana */
+.month-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    display: inline-block;
+    transition: all 0.4s;
+}
+
+/* Scrollbar ho an'ny tabilao */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+}
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
 }
