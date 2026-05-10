@@ -1,25 +1,167 @@
-/* Fandrindrana ankapobeny */
-body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.01em;
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+
+    --border: #e2e8f0;
 }
 
-/* Karatra fampisehoana tarehimarika */
+/* =========================
+   BASE
+========================= */
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--primary-dark);
+    color: white;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* =========================
+   CARDS
+========================= */
+
 .stat-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+    background: var(--card);
+    border-radius: 18px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    transition: 0.2s ease;
 }
 
 .stat-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
 }
 
-/* Stil'ny tabilao */
+.stat-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    margin-top: 6px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+thead {
+    background: #f8fafc;
+}
+
+th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px;
+}
+
+td {
+    padding: 12px;
+    border-top: 1px solid var(--border);
+}
+
+tr:hover {
+    background: #f9fafb;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn {
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--warning);
+    color: white;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+input {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+    outline: none;
+}
+
+/* =========================
+   TAB SYSTEM
+========================= */
+
 .tab-content {
     display: none;
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn 0.25s ease;
 }
 
 .tab-content.active {
@@ -27,39 +169,43 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Stil'ny input */
-.input-field {
-    transition: all 0.2s;
-    border: 1.5px solid #e2e8f0;
+/* =========================
+   PROGRESS BAR
+========================= */
+
+.progress {
+    background: #e5e7eb;
+    height: 10px;
+    border-radius: 999px;
+    overflow: hidden;
 }
 
-.input-field:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
-    background: white;
+.progress-bar {
+    height: 100%;
+    background: var(--primary);
+    transition: width 0.5s ease;
 }
 
-/* Boribory kely amin'ny volana */
-.month-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 9999px;
-    display: inline-block;
-    transition: all 0.4s;
-}
+/* =========================
+   MOBILE
+========================= */
 
-/* Scrollbar ho an'ny tabilao */
-.overflow-x-auto::-webkit-scrollbar {
-    height: 6px;
-}
-.overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f5f9;
-}
-.overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
+@media (max-width: 768px) {
+
+    .stat-card {
+        padding: 14px;
+    }
+
+    .stat-value {
+        font-size: 18px;
+    }
+
+    th, td {
+        font-size: 12px;
+        padding: 10px;
+    }
 }
